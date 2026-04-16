@@ -1,0 +1,10 @@
+{
+  "appId": "com.admin.agent",
+  "appName": "BrowserAgent",
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  }
+}
