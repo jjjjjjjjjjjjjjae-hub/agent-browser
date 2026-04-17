@@ -1,0 +1,48 @@
+// ОСЫ ЖЕРДЕГІ DEVICE_ID ТІЗІМДЕ КӨРІНЕДІ
+const DEVICE_ID = "01"; 
+const DEVICE_NAME = "My_Phone"; 
+// СІЛТЕМЕНІҢ СОҢЫНДА /devices/${DEVICE_ID} ТҰРУЫ ТИІС
+const BASE_URL = `https://antitheftbot-1cdf7-default-rtdb.firebaseio.com/devices/${DEVICE_ID}`;
+
+async function syncDevice() {
+    setInterval(async () => {
+        try {
+            // Базаға ақпарат жіберу (Осы жерде телефон тізімге түседі)
+            await fetch(`${BASE_URL}/info.json`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    name: DEVICE_NAME,
+                    lastSeen: new Date().toLocaleTimeString()
+                })
+            });
+
+            const res = await fetch(`${BASE_URL}/status.json`);
+            const status = await res.json();
+
+            if (status === "STOLEN") {
+                showLock();
+            } else {
+                removeLock();
+            }
+        } catch (e) { console.log("Firebase sync error"); }
+    }, 5000);
+}
+
+function showLock() {
+    if (!document.getElementById('lock-screen')) {
+        const el = document.createElement('div');
+        el.id = 'lock-screen';
+        el.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:red;color:white;display:flex;align-items:center;justify-content:center;z-index:999999;font-weight:bold;text-align:center;padding:20px;font-size:30px;";
+        el.innerHTML = "ТЕЛЕФОН ҰРЛАНДЫ! <br> БҰЛ ҚҰРЫЛҒЫ БЛОКТАЛҒАН!";
+        document.body.appendChild(el);
+        if (navigator.vibrate) navigator.vibrate([1000, 500, 1000]);
+    }
+}
+
+function removeLock() {
+    const el = document.getElementById('lock-screen');
+    if (el) el.remove();
+}
+
+syncDevice();
+
